@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control - Servicio SAMAY</title>
+    <style>
+        body {
+            font-family: Courier, monospace;
+            background-image: url('gradient-abstract-wireframe-background_23-2149020364.avif');
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            text-align: center;
+            margin-top: 0px;
+            justify-content: center;
+            overflow-y: auto;
+        }
+        .main-title {
+            font-size: 50px;
+            font-family: Courier, monospace;
+            color: #8298f7;
+            font-weight: bold;
+            text-align: left;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+        }
+
+        /* Estilo para el recuadro superior */
+        .header-banner {
+            font-family: Andale Mono, monospace;
+            background-color: #61ebc8;
+            color: rgb(67, 4, 126);
+            padding: 0px;
+            font-size: 30px;
+            text-align: right;
+            padding-right: 20px;
+            font-weight: bold;
+            padding-block: 20px;
+        }
+        p {
+            color: #f8f7f7;
+            text-align: left;
+            padding-left: 200px;
+            font-size: 25px;
+        }
+        .btn {
+            font-family: Monaco, monospace;
+            padding: 15px 30px;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+        }
+        .btn-check {
+            font-size: 26px;
+            position: absolute;
+            top: 500px;
+            left: 300px;
+            background-color: #ebb6b6;
+            color: rgb(223, 20, 20);
+        }
+        .btn-check:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .btn-return {
+            font-size: 36px;
+            position: absolute;
+            top: 350px;
+            right: 20px;
+            background-color: #dc3545;
+            color: white;
+        }
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 30px;
+                text-align: center;
+            }
+            p {
+                font-size: 25px;
+                padding-left: 10px;
+                text-align: center;
+            }
+
+            .btn-check, .btn-return {
+                position: static; /* Cambiar posición absoluta a estática */
+                margin: 20px auto; /* Centrar botones */
+                display: block; /* Forzar que los botones se alineen verticalmente */
+            }
+
+            .btn-check {
+                font-size: 20px;
+                padding: 10px 20px;
+            }
+
+            .btn-return {
+                font-size: 24px;
+                padding: 10px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-banner {
+                font-size: 20px;
+                padding: 10px;
+            }
+
+            .btn-check, .btn-return {
+                width: 90%; /* Ajustar ancho a casi todo el viewport */
+            }
+        }       
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/4.3.7/mqtt.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- Recuadro superior -->
+    <div class="header-banner">
+        Panel de Control - Servicio SAMAY
+    </div>
+
+    <h1 class="main-title">Panel de control de servicio...</h1>
+    <div>
+        <p id="ultrasonicoStatus">Ultrasonido: Esperando...</p>
+        <p id="finCarreraStatus">Fin de carrera: Esperando...</p>
+        <p id="buzzerStatus">Buzzer: Esperando...</p>
+        <p id="pulsadorStatus">Pulsador Magnético: Esperando...</p>
+        <p id="ledStatus">Tira LED: Esperando...</p>
+        <p id="bateriaStatus">Voltaje Batería: Esperando...</p>
+    </div>
+
+    <button class="btn btn-check" onclick="startSystem()">
+        <span>Iniciar</span><br>
+        <span>Control</span>
+    </button>
+    <a href="/index.html" class="btn btn-return">Retornar</a>
+
+    </div>
+
+    <script> 
+
+        const client = mqtt.connect('wss://n63cee2f.ala.us-east-1.emqxsl.com:8084/mqtt', {
+            username: 'RCP',
+            password: '1234567890',
+        });
+
+        client.on('connect', () => {
+            console.log('Conectado al servidor MQTT');
+            client.subscribe('sensor/#');
+        });
+
+        client.on('message', (topic, message) => {
+            const data = message.toString();
+            switch (topic) {
+                case 'sensor/ultra':
+                    document.getElementById('ultrasonicoStatus').innerText = `Ultrasonido: ${data}`;
+                    break;
+                case 'sensor/fin_carr':
+                    document.getElementById('finCarreraStatus').innerText = `Fin de carrera: ${data}`;
+                    break;
+                case 'sensor/buzzer':
+                    document.getElementById('buzzerStatus').innerText = `Buzzer: ${data}`;
+                    break;
+                case 'sensor/magnetico':
+                    document.getElementById('pulsadorStatus').innerText = `Pulsador Magnético: ${data}`;
+                    break;
+                case 'sensor/tira':
+                    document.getElementById('ledStatus').innerText = `Tira LED: ${data}`;
+                    break;
+                case 'sensor/bateria':
+                    document.getElementById('bateriaStatus').innerText = `Voltaje Batería: ${data} V`;
+                    break;
+            }
+        });
+
+        function startSystem() {
+            const button = document.getElementById('controlButton');
+            button.disabled = true;
+            client.publish('control/autotest', 'start');
+            console.log('Comando de inicio de autotest enviado');
+
+            setTimeout(() => {
+                button.disabled = false;
+            }, 6000); // Ajustar duración del autotest
+        }
+    </script>
+    <script src="js/custom.js"></script>
+</body>
+</html>

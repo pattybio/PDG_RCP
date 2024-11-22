@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Samay</title>
+  <meta name="description" content="Admin, Dashboard, Bootstrap, Bootstrap 4, Angular, AngularJS" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimal-ui" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <!-- for ios 7 style, multi-resolution icon of 152x152 -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-barstyle" content="black-translucent">
+  <link rel="apple-touch-icon" href="...">
+  <meta name="apple-mobile-web-app-title" content="Flatkit">
+  <!-- for Chrome on Android, multi-resolution icon of 196x196 -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="shortcut icon" sizes="196x196" href="....">
+
+  <!-- style -->
+  <link rel="stylesheet" href="../assets/animate.css/animate.min.css" type="text/css" />
+  <link rel="stylesheet" href="../assets/glyphicons/glyphicons.css" type="text/css" />
+  <link rel="stylesheet" href="../assets/font-awesome/css/font-awesome.min.css" type="text/css" />
+  <link rel="stylesheet" href="../assets/material-design-icons/material-design-icons.css" type="text/css" />
+
+  <link rel="stylesheet" href="../assets/bootstrap/dist/css/bootstrap.min.css" type="text/css" />
+  <!-- build:css ../assets/styles/app.min.css -->
+  <link rel="stylesheet" href="../assets/styles/app.css" type="text/css" />
+  <!-- endbuild -->
+  <link rel="stylesheet" href="../assets/styles/font.css" type="text/css" />
+</head>
+
+<body>
+  <div class="app" id="app">
+
+    <!-- ############ LAYOUT START-->
+
+
+    <!-- / aside -->
+
+    <!-- content -->
+    <div id="content" class="app-content box-shadow-z3" role="main">
+      <div class="app-header info box-shadow-z4 navbar-md">
+        <div class="navbar navbar-toggleable-sm flex-row align-items-center">
+          <!-- Open side - Naviation on mobile -->
+          <a data-toggle="modal" data-target="#aside" class="hidden-lg-up mr-3">
+            <i class="material-icons">&#xe5d2;</i>
+          </a>
+          <!-- / -->
+
+          <!-- Page title - Bind to $state's title -->
+          <div class="mb-0 h5 no-wrap" ng-bind="$state.current.data.title" id="pageTitle"></div>
+
+          <!-- navbar collapse -->
+          <div class="collapse navbar-collapse" id="collapse">
+            <!-- link and dropdown -->
+            <ul class="nav navbar-nav mr-auto">
+              <li class="nav-item dropdown">
+                <span>Bienvenido a</span>
+                <h5 class="mb-0 _300">Samay</h5>
+                </a>
+                <div ui-include="'../views/blocks/dropdown.new.html'"></div>
+              </li>
+            </ul>
+            <!-- / -->
+          </div>
+          <!-- / navbar collapse -->
+
+          <!-- navbar right -->
+
+          <!-- / navbar right -->
+        </div>
+      </div>
+      <div class="app-body" id="view">
+
+        <!-- ############ PAGE START-->
+        <div class="padding">
+          <div class="row no-gutter box">
+            <div class="col-sm-8">
+              <div class="box-header">
+                <h3>Profundidad de</h3>
+                <small>compresión</small>
+              </div>
+              <div class="box-body">
+                <div ui-jp="plot" ui-refresh="app.setting.color" ui-options="
+	              [
+	                { 
+	                  data: [[1, 6.1], [2, 6.3], [3, 6.4], [4, 6.6], [5, 7.0], [6, 7.7], [7, 8.3]], 
+	                  bars: { show: true, barWidth: 0.2, align: 'left', lineWidth: 1, fillColor: { colors: [{ opacity: 0.6 }, { opacity: 1}] } } 
+	                },
+	                { 
+	                  data: [[1, 5.5], [2, 5.7], [3, 6.4], [4, 7.0], [5, 7.2], [6, 7.3], [7, 7.5]], 
+	                  bars: { show: true, barWidth: 0.2, align: 'right', lineWidth: 1, fillColor: { colors: [{ opacity: 0.6 }, { opacity: 1}] } } 
+	                }
+	              ], 
+	              {
+	                colors: ['#0cc2aa','#fcc100'],
+	                series: { shadowSize: 3 },
+	                xaxis: { show: true, font: { color: '#ccc' }, position: 'bottom' },
+	                yaxis:{ show: true, font: { color: '#ccc' }},
+	                grid: { hoverable: true, clickable: true, borderWidth: 0, color: 'rgba(120,120,120,0.5)' },
+	                tooltip: true,
+	                tooltipOpts: { content: '%x.0 is %y.4',  defaultTheme: false, shifts: { x: 0, y: -40 } }
+	              }
+	            " style="height:200px">
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-4 dker">
+              <div class="box-header">
+                <h3>Datos de Usuario</h3>
+              </div>
+              <div class="box-body">
+                <form>
+                  <div class="form-group">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" class="form-control" id="nombre" placeholder="Ingrese el nombre">
+                  </div>
+                  <div class="form-group">
+                    <label for="duracion">Duración:</label>
+                    <input type="text" class="form-control" id="duracion" placeholder="Ingrese la duración">
+                  </div>
+                  <div class="form-group">
+                    <label for="resultado">Resultado:</label>
+                    <input type="text" class="form-control" id="resultado" placeholder="Ingrese el resultado">
+                  </div>
+                  <button type="submit" class="md-btn md-raised m-b-sm p-x success">Guardar</button>
+                </form>
+              </div>
+            </div>
+
+
+          </div>
+
+          <div class="padding">
+            <div class="row">
+              <div class="col-sm-6 col-md-4">
+                <div class="box">
+                  <div class="box-header">
+                    <h3>Frecuencia de</h3>
+                    <small>Compresión</small>
+                  </div>
+                  <div class="box-body">
+                    <div ui-jp="plot" ui-refresh="app.setting.color" ui-options="
+                                      [
+                                        { 
+                                          data: [[1, 5.5], [2, 5.7], [3, 6.4], [4, 7.0], [5, 7.2], [6, 7.3], [7, 7.5]], 
+                                          points: { show: true, radius: 5}, 
+                                          splines: { show: true, tension: 0.45, lineWidth: 5} 
+                                        }
+                                      ], 
+                                      {
+                                        colors: ['#fcc100'],
+                                        series: { shadowSize: 3 },
+                                        xaxis: { show: true, font: { color: '#ccc' }, position: 'bottom' },
+                                        yaxis:{ show: true, font: { color: '#ccc' }, min:3},
+                                        grid: { hoverable: true, clickable: true, borderWidth: 0, color: 'rgba(120,120,120,0.5)' },
+                                        tooltip: true,
+                                        tooltipOpts: { content: '%x.0 is %y.4',  defaultTheme: false, shifts: { x: 0, y: -40 } }
+                                      }
+                                    " style="height:200px">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6 col-md-4">
+                <div class="box">
+                  <div class="box-header">
+                    <h3>Historico</h3>
+                    <small>Full fill</small>
+                  </div>
+                  <div class="box-body">
+                    <div ui-jp="plot" ui-refresh="app.setting.color" ui-options="
+                                      [{data: 75, label: &#x27;iPhone&#x27;}, {data: 20, label: &#x27;iPad&#x27;}],
+                                      {
+                                        series: { pie: { show: true, innerRadius: 0, stroke: { width: 0 }, label: { show: true, threshold: 0.05 } } },
+                                        legend: {backgroundColor: 'transparent'},
+                                        colors: ['#0cc2aa','#fcc100'],
+                                        grid: { hoverable: true, clickable: true, borderWidth: 0, color: 'rgba(120,120,120,0.5)' },   
+                                        tooltip: true,
+                                        tooltipOpts: { content: '%s: %p.0%' }
+                                      }
+                                    " style="height:200px"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-6 col-md-4">
+                <div class="box">
+                  <div class="box-header">
+                    <h3>Historico</h3>
+                    <small>Interactive features</small>
+                  </div>
+                  <div class="box-body">
+                    <div class="p-y-md">
+                      <div ui-jp="plot" ui-refresh="app.setting.color" ui-options="
+                                        [{data: 30, label: &#x27;Server&#x27;}, {data: 70, label: &#x27;Client&#x27;}],
+                                        {
+                                          series: { pie: { show: true, innerRadius: 0, stroke: { width: 2, color: '#fff' }, label: { show: true, threshold: 0.05 }, tilt: 0.5, startAngle: 30 } },
+                                          legend: {backgroundColor: 'transparent'},
+                                          colors: ['#fcc100','#0cc2aa'],
+                                          grid: { hoverable: true, clickable: true, borderWidth: 0, color: 'rgba(120,120,120,0.5)' },   
+                                          tooltip: true,
+                                          tooltipOpts: { content: '%s: %p.0%' }
+                                        }
+                                      " style="height:152px"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- / -->
+
+          <!-- theme switcher -->
+          <div id="switcher">
+            <div class="switcher box-color dark-white text-color" id="sw-theme">
+              <a href ui-toggle-class="active" target="#sw-theme" class="box-color dark-white text-color sw-btn">
+                <i class="fa fa-gear"></i>
+              </a>
+              <div class="box-header">
+                <a href="https://themeforest.net/item/flatkit-app-ui-kit/13231484?ref=flatfull"
+                  class="btn btn-xs rounded danger pull-right">BUY</a>
+                <h2>Theme Switcher</h2>
+              </div>
+              <div class="box-divider"></div>
+              <div class="box-body">
+                <p class="hidden-md-down">
+                  <label class="md-check m-y-xs" data-target="folded">
+                    <input type="checkbox">
+                    <i class="green"></i>
+                    <span class="hidden-folded">Folded Aside</span>
+                  </label>
+                  <label class="md-check m-y-xs" data-target="boxed">
+                    <input type="checkbox">
+                    <i class="green"></i>
+                    <span class="hidden-folded">Boxed Layout</span>
+                  </label>
+                  <label class="m-y-xs pointer" ui-fullscreen>
+                    <span class="fa fa-expand fa-fw m-r-xs"></span>
+                    <span>Fullscreen Mode</span>
+                  </label>
+                </p>
+                <p>Themes:</p>
+                <div data-target="bg" class="row no-gutter text-u-c text-center _600 clearfix">
+                  <label class="p-a col-sm-6 light pointer m-0">
+                    <input type="radio" name="theme" value="" hidden>
+                    Light
+                  </label>
+                  <label class="p-a col-sm-6 grey pointer m-0">
+                    <input type="radio" name="theme" value="grey" hidden>
+                    Grey
+                  </label>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+          <!-- / -->
+
+          <!-- ############ LAYOUT END-->
+
+        </div>
+        <!-- build:js scripts/app.html.js -->
+        <!-- jQuery -->
+        <script src="../libs/jquery/jquery/dist/jquery.js"></script>
+        <!-- Bootstrap -->
+        <script src="../libs/jquery/tether/dist/js/tether.min.js"></script>
+        <script src="../libs/jquery/bootstrap/dist/js/bootstrap.js"></script>
+        <!-- core -->
+        <script src="../libs/jquery/underscore/underscore-min.js"></script>
+        <script src="../libs/jquery/jQuery-Storage-API/jquery.storageapi.min.js"></script>
+        <script src="../libs/jquery/PACE/pace.min.js"></script>
+
+        <script src="scripts/config.lazyload.js"></script>
+
+        <script src="scripts/palette.js"></script>
+        <script src="scripts/ui-load.js"></script>
+        <script src="scripts/ui-jp.js"></script>
+        <script src="scripts/ui-include.js"></script>
+        <script src="scripts/ui-device.js"></script>
+        <script src="scripts/ui-form.js"></script>
+        <script src="scripts/ui-nav.js"></script>
+        <script src="scripts/ui-screenfull.js"></script>
+        <script src="scripts/ui-scroll-to.js"></script>
+        <script src="scripts/ui-toggle-class.js"></script>
+
+        <script src="scripts/app.js"></script>
+
+        <!-- ajax -->
+        <script src="../libs/jquery/jquery-pjax/jquery.pjax.js"></script>
+        <script src="scripts/ajax.js"></script>
+        <!-- endbuild -->
+</body>
+
+</html>

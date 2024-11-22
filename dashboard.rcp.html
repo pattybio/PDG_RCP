@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aprendiendo RCP</title>
+    <style>
+        /* Mantienes los estilos originales */
+        body {
+            font-family: Courier, monospace;
+            background-color: #b0d1eb;
+            text-align: left;
+            margin-top: 20px;
+        }
+        p {
+            color: #080808;
+            text-align: center;
+            padding-right: 20px;
+            font-size: 17px;
+        }
+        .p1 {
+            color: #080808;
+            text-align: left;
+            padding-left: 20px;
+            font-size: 17px;
+        }
+        .main-title {
+            font-size: 30px;
+            font-family: Courier, monospace;
+            color: #3c5ef5;
+            font-weight: bold;
+            text-align: left;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+        }
+        .header-banner {
+            font-family: Courier, monospace;
+            background-color: #ffc5f2;
+            color: white;
+            padding: 0px;
+            font-size: 20px;
+            text-align: left;
+            padding-left: 20px;
+            font-weight: bold;
+        }
+        .header-banner1 {
+            font-family: Courier, monospace;
+            background-color: #ffc5f2;
+            color: white;
+            padding: 0px;
+            font-size: 30px;
+            text-align: left;
+            padding-left: 20px;
+            font-weight: bold;
+        }
+        .btn {
+            font-family: Monaco, monospace;
+            padding: 15px 30px;
+            font-size: 16px;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+        }
+        .btn-on {
+            position: absolute;
+            top: 250px;
+            left: 50px;
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-off {
+            position: absolute;
+            top: 1px;
+            right: 10px;
+            background-color: #dc3545;
+            color: white;
+        }
+        .charts {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .charts-row {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .chart-containerp {
+            width: 300px;
+            height: 300px;
+        }
+        .chart-containerb, .chart-containerl {
+            width: 45%;
+            margin: auto;
+            padding-top: 20px;
+            height: auto;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/4.3.7/mqtt.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="header-banner">Bienvenido a</div>
+    <div class="header-banner1">SAMAY</div>
+
+    <h1 class="main-title">Aprendiendo RCP</h1>
+
+    <p1>Nombre Completo: <input type="text" id="nombreInput" placeholder="Ingresa Nombre Completo"></p>
+    <p1>Fecha: <input type="date" id="fechaInput"></p>
+
+    
+    <p>Frecuencia de compresión: <span id="status"></span> segundos</p>
+    <p>Pulso: <span id="pulso">0</span></p>
+    <p>Distancia de compresión: <span id="resta">0</span> cm</p>
+    
+    <button class="btn btn-on" onclick="guardarDatos()">Guardar</button>
+    <button class="btn btn-off" onclick="stopSystem()">Apagar Sistema</button>
+    
+    <div class="charts-row">
+        <div class="chart-containerb">
+            <canvas id="restaChart"></canvas>
+        </div>
+        <div class="chart-containerl">
+            <canvas id="statusChart"></canvas>
+        </div>
+    </div>
+    <div class="charts">
+        <div class="chart-containerp">
+            <canvas id="pieChart1"></canvas>
+        </div>
+        <div class="chart-containerp">
+            <canvas id="pieChart2"></canvas>
+        </div>
+        <div class="chart-containerp">
+            <canvas id="pieChart3"></canvas>
+        </div>
+    </div>
+    <script>
+        const client = mqtt.connect('wss://n63cee2f.ala.us-east-1.emqxsl.com:8084/mqtt', {
+            username: 'RCP',
+            password: '1234567890',
+        });
+
+        const statusChartCtx = document.getElementById('statusChart').getContext('2d');
+        const restaChartCtx = document.getElementById('restaChart').getContext('2d');
+
+        let counter = 0;
+        let pulsoData = [];
+        let statusData = [];
+
+        const statusChart = new Chart(statusChartCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Frecuencia',
+                    data: [],
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    fill: true,
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        type: 'linear',
+                        title: {
+                            display: true,
+                            text: 'Pulso'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Frecuencia'
+                        }
+                    }
+                }
+            }
+        });
+
+        const restaChart = new Chart(restaChartCtx, {
+            type: 'bar',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Resta',
+                    data: [],
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                }]
+            },
+        });
+
+        client.on('connect', () => {
+            console.log('Conectado al servidor MQTT');
+            client.subscribe(['pulso/count', 'led/status', 'sensor/resta']);
+        });
+
+        client.on('message', (topic, message) => {
+            const data = parseFloat(message.toString());
+
+            switch (topic) {
+                case 'pulso/count':
+                    document.getElementById('pulso').innerText = data;
+                    pulsoData.push(data);
+                    break;
+                case 'led/status':
+                    document.getElementById('status').innerText = data;
+                    statusData.push(data);
+                    break;
+                case 'sensor/resta':
+                    if (!isNaN(data)) {
+                        document.getElementById('resta').innerText = data;
+                        counter++;
+                        restaChart.data.labels.push(counter);
+                        restaChart.data.datasets[0].data.push(data);
+                        restaChart.update();
+                    }
+                    break;
+            }
+            if (pulsoData.length > 0 && statusData.length > 0) {
+                statusChart.data.labels = pulsoData; // Eje X
+                statusChart.data.datasets[0].data = statusData; // Eje Y
+                statusChart.update();
+            }
+        });
+
+        // Nuevo método para guardar datos
+        function guardarDatos() {
+            const nombreUsuario = document.getElementById('nombreInput').value;
+            const fechaIngresada = document.getElementById('fechaInput').value;
+
+            if (nombreUsuario && fechaIngresada) {
+                alert(`Datos guardados:\nNombre: ${nombreUsuario}\nFecha: ${fechaIngresada}`);
+            } else {
+                alert("Por favor, completa todos los campos antes de guardar.");
+            }
+        }
+
+        // Código del gráfico de torta 1
+        const ctx1 = document.getElementById('pieChart1').getContext('2d');
+        const data1 = {
+            labels: ['Valor 1', 'Valor 2', 'Valor 3'],
+            datasets: [{
+                data: [30, 45, 25],
+                backgroundColor: ['#ff4d4d', '#ffd633', '#4CAF50'],
+            }]
+        };
+
+        new Chart(ctx1, {
+            type: 'pie',
+            data: data1,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return `${tooltipItem.label}: ${tooltipItem.raw}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Código del gráfico de torta 2
+        const ctx2 = document.getElementById('pieChart2').getContext('2d');
+        const data2 = {
+            labels: ['Valor A', 'Valor B', 'Valor C'],
+            datasets: [{
+                data: [40, 30, 30],
+                backgroundColor: ['#36A2EB', '#FFCE56', '#FF6384'],
+            }]
+        };
+
+        new Chart(ctx2, {
+            type: 'pie',
+            data: data2,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return `${tooltipItem.label}: ${tooltipItem.raw}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Código del gráfico de torta 3
+        const ctx3 = document.getElementById('pieChart3').getContext('2d');
+        const data3 = {
+            labels: ['Categoria X', 'Categoria Y', 'Categoria Z'],
+            datasets: [{
+                data: [20, 50, 30],
+                backgroundColor: ['#FF9F40', '#4BC0C0', '#9966FF'],
+            }]
+        };
+
+        new Chart(ctx3, {
+            type: 'pie',
+            data: data3,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return `${tooltipItem.label}: ${tooltipItem.raw}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
